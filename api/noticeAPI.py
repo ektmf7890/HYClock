@@ -31,25 +31,5 @@ def get_recent_notice():
                 diff = len(total_notices) - NUM_OF_ITEMS
                 total_notices = total_notices[:-diff]
             break
-    for i in total_notices:
-        print(i)
-    print('공지 개수 : ', len(total_notices))
     return total_notices
 
-get_recent_notice()
-
-
-'''
-<div class="title-info">
-    <p class="title">
-        <span class="label_ERICA">ERICA</span>
-        <a href="javascript:_mainNotice_WAR_noticeportlet_view_message(489701);">[ERICA 학부] 2020-2학기 1주차 원격수업 청강 신청 방법 및 개강 후 수강정정 안내</a>
-    </p>
-    <div class="notice-writer">
-        학사팀 / 배원진
-    </div>
-    <div class="notice-date">
-        <span class="date"> 2020.08.25 ~ 2020.09.18 </span>
-    </div>
-</div>
-'''
