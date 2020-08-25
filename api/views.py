@@ -3,6 +3,8 @@ from api.weatherAPI import *
 from api.noticeAPI import *
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+import re
+
 
 @api_view(['GET'])
 def return_weather(request):
@@ -18,6 +20,7 @@ def return_weather(request):
     }
     return Response(context)
 
+
 @api_view(['GET'])
 def return_notices(request):
     notices = get_recent_notice()
@@ -26,10 +29,17 @@ def return_notices(request):
         title = notice.p.a.get_text()
         writer = notice.find('div', {'class': 'notice-writer'}).get_text()
         date = notice.find('div', {'class': 'notice-date'}).span.get_text()
+        href = notice.p.a.get('href')
+        notice_number = int(re.search(r'\((.*?)\)', href).group(1))
+        base_url = 'https://www.hanyang.ac.kr/web/www/main-notices'
+        params = 'p_p_id=mainNotice_WAR_noticeportlet&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_count=1&_mainNotice_WAR_noticeportlet_sCurPage=1&_mainNotice_WAR_noticeportlet_action=view_message'
+        href_url = f'{base_url}?{params}&_mainNotice_WAR_noticeportlet_messageId={notice_number}'
+
         notice_list.append({
             'title': title,
             'writer': writer,
             'date': date,
+            'href_url': href_url,
         })
 
     context = {
@@ -38,7 +48,6 @@ def return_notices(request):
         'noticeList': notice_list,
     }
     return Response(context)
-
 
 
 
