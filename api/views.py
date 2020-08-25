@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from api.weatherAPI import *
+from api.noticeAPI import *
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
