@@ -11,21 +11,24 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
+BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '$nwysec$c(c_0+#)$vcrxmc)-4c(al9z0g*7g@fa-@&u1_@s(&'
+# SECRET_KEY = '$nwysec$c(c_0+#)$vcrxmc)-4c(al9z0g*7g@fa-@&u1_@s(&'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '$nwysec$c(c_0+#)$vcrxmc)-4c(al9z0g*7g@fa-@&u1_@s(&')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -120,3 +123,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'api', 'static'),
+]
