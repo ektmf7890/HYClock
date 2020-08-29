@@ -250,5 +250,5 @@ fabric.properties
 .idea/codestream.xml
 
 .idea/
-
+.secrets/
 # End of https://www.toptal.com/developers/gitignore/api/pycharm,django
