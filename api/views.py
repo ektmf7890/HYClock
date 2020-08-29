@@ -57,6 +57,11 @@ def return_notices(request):
 
 
 
+@api_view(['POST'])
+def post_suggestion(request):
+    pass
+
+
 
 
 
