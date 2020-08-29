@@ -1,5 +1,5 @@
 # from datetime import datetime, timedelta
-from django.utils.timezone import timezone, timedelta
+from django.utils import timezone
 import requests
 
 category_map = {
@@ -22,20 +22,20 @@ category_map = {
     'LGT': '낙뢰',
 }
 
-
 # 초단기 실황 조회 -> 1시간 단위 기온
 def get_ultra_srt_ncst():
-    now = timezone.now()
+    now = timezone.localtime()
+    if str(now.hour) == "0" or str(now.hour) == "1":
+        now = now - timezone.timedelta(hours=1)
+        base_time = now
+    else:
+        base_time = now - timezone.timedelta(hours=1)
+    base_date = now.strftime("%Y%m%d")
+
     base_url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtNcst'
     key = 'X5SR1tXGMMIIhiGfESNHl934eVnCDtQwTN%2B7JYgkGs2vWFkDdter5IhoTH8zNSKPuohVnrycbdhG%2F%2B5tHqQBVw%3D%3D'
-    base_date = now.strftime('%Y%m%d')
-    if now.hour == 0:
-        base_time = str(23)
-    else:
-        now = now - timedelta(hours=1)
-        base_time = now.strftime("%H")
 
-    url = f'{base_url}?serviceKey={key}&dataType=JSON&numOfRows=36&base_date={base_date}&base_time={base_time}00&nx=61&ny=127'
+    url = f'{base_url}?serviceKey={key}&dataType=JSON&numOfRows=36&base_date={base_date}&base_time={base_time.strftime("%H")}00&nx=61&ny=127'
     result = requests.get(url).json()['response']['body']['items']['item']
 
     current_weather = {}
@@ -47,63 +47,71 @@ def get_ultra_srt_ncst():
 
 # 초단기 예보 조회
 def get_ultra_srt_fcst():
-    now = timezone.now()
+    now = timezone.localtime()
+    if str(now.hour) == "0" or str(now.hour) == "1":
+        now = now - timezone.timedelta(hours=1)
+        base_time = now
+    else:
+        base_time = (now - timezone.timedelta(hours=1))
+
+    base_date = now.strftime("%Y%m%d")
+    print(base_date, base_time)
+
     base_url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtFcst'
     key = 'X5SR1tXGMMIIhiGfESNHl934eVnCDtQwTN%2B7JYgkGs2vWFkDdter5IhoTH8zNSKPuohVnrycbdhG%2F%2B5tHqQBVw%3D%3D'
-    base_date = now.strftime('%Y%m%d')
-    base_time = now - timedelta(hours=1)
 
     url = f'{base_url}?serviceKey={key}&dataType=JSON&numOfRows=60&base_date={base_date}&base_time={base_time.strftime("%H")}30&nx=61&ny=127'
     result = requests.get(url).json()['response']['body']['items']['item']
 
     hourly_weather = {
-        f'{(base_time + timedelta(hours=1)).strftime("%H")}00': {},
-        f'{(base_time + timedelta(hours=2)).strftime("%H")}00': {},
-        f'{(base_time + timedelta(hours=3)).strftime("%H")}00': {},
-        f'{(base_time + timedelta(hours=4)).strftime("%H")}00': {},
-        f'{(base_time + timedelta(hours=5)).strftime("%H")}00': {},
-        f'{(base_time + timedelta(hours=6)).strftime("%H")}00': {},
+        f'{(base_time + timezone.timedelta(hours=1)).strftime("%H")}00': {},
+        f'{(base_time + timezone.timedelta(hours=2)).strftime("%H")}00': {},
+        f'{(base_time + timezone.timedelta(hours=3)).strftime("%H")}00': {},
+        f'{(base_time + timezone.timedelta(hours=4)).strftime("%H")}00': {},
+        f'{(base_time + timezone.timedelta(hours=5)).strftime("%H")}00': {},
+        f'{(base_time + timezone.timedelta(hours=6)).strftime("%H")}00': {},
     }
     for data in result:
         target = hourly_weather[data['fcstTime']]
         target[category_map[data['category']]] = data['fcstValue']
 
-    CURRENT_WEATHER_KEY = f'{(base_time + timedelta(hours=1)).strftime("%H")}00'
+    CURRENT_WEATHER_KEY = f'{(base_time + timezone.timedelta(hours=1)).strftime("%H")}00'
     return CURRENT_WEATHER_KEY, hourly_weather
 
 
 # 동네 예보 -> 3시간 단위  정보
-NUM_OF_ITEMS = 4    # 총 15개 가져올 수 있음
-MAX_CATEGORY = 14
-def get_vilage_fcst():
-    now = timezone.now()
-    base_url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst'
-    key = 'X5SR1tXGMMIIhiGfESNHl934eVnCDtQwTN%2B7JYgkGs2vWFkDdter5IhoTH8zNSKPuohVnrycbdhG%2F%2B5tHqQBVw%3D%3D'
-    base_date = now.strftime('%Y%m%d')
-    if (now.hour)%3 == 0:
-        base_time = now - timedelta(hours = 4)
-    elif (now.hour)%3 == 1:
-        base_time = now - timedelta(hours = 5)
-    else:
-        base_time = now - timedelta(hours = 3)
-    url = f'{base_url}?serviceKey={key}&dataType=JSON&numOfRows={NUM_OF_ITEMS*MAX_CATEGORY}&base_date={base_date}&base_time={base_time.strftime("%H")}00&nx=61&ny=127'
-    result = requests.get(url).json()['response']['body']['items']['item']
-
-    three_hourly_weather = {
-        f'{(base_time + timedelta(hours=4)).strftime("%H")}00': {},
-        f'{(base_time + timedelta(hours=7)).strftime("%H")}00': {},
-        f'{(base_time + timedelta(hours=10)).strftime("%H")}00': {},
-        f'{(base_time + timedelta(hours=13)).strftime("%H")}00': {},
-    }
-    for data in result:
-        target = three_hourly_weather.get(data['fcstTime'])
-        if target == None:
-            break
-        target[category_map[data['category']]] = data['fcstValue']
-
-    return three_hourly_weather
-
-# get_ultra_srt_ncst()
-# get_ultra_srt_fcst()
-# get_vilage_fcst()
+# NUM_OF_ITEMS = 4    # 총 15개 가져올 수 있음
+# MAX_CATEGORY = 14
+# def get_vilage_fcst():
+#     now = timezone.localtime()
+#     if str(now.hour) == "0" or str(now.hour) == "1":
+#         delta = timezone.timedelta(hours=1)
+#         now = now - delta
+#
+#     base_url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst'
+#     key = 'X5SR1tXGMMIIhiGfESNHl934eVnCDtQwTN%2B7JYgkGs2vWFkDdter5IhoTH8zNSKPuohVnrycbdhG%2F%2B5tHqQBVw%3D%3D'
+#     base_date = now.strftime("%Y%m%d")
+#     if (now.hour) % 3 == 0:
+#         base_time = now - timezone.timedelta(hours=4)
+#     elif (now.hour) % 3 == 1:
+#         base_time = now - timezone.timedelta(hours=5)
+#     else:
+#         base_time = now - timezone.timedelta(hours=3)
+#     print(base_date, base_time)
+#     url = f'{base_url}?serviceKey={key}&dataType=JSON&numOfRows={NUM_OF_ITEMS*MAX_CATEGORY}&base_date={base_date}&base_time={base_time.strftime("%H")}00&nx=61&ny=127'
+#     result = requests.get(url).json()['response']['body']['items']['item']
+#
+#     three_hourly_weather = {
+#         f'{(base_time + timezone.timedelta(hours=4)).strftime("%H")}00': {},
+#         f'{(base_time + timezone.timedelta(hours=7)).strftime("%H")}00': {},
+#         f'{(base_time + timezone.timedelta(hours=1)).strftime("%H")}00': {},
+#         f'{(base_time + timezone.timedelta(hours=1)).strftime("%H")}00': {},
+#     }
+#     for data in result:
+#         target = three_hourly_weather.get(data['fcstTime'])
+#         if target == None:
+#             break
+#         target[category_map[data['category']]] = data['fcstValue']
+#
+#     return three_hourly_weather
 
