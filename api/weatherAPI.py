@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta
+# from datetime import datetime, timedelta
+from django.utils.timezone import timezone, timedelta
 import requests
 
 category_map = {
@@ -24,7 +25,7 @@ category_map = {
 
 # 초단기 실황 조회 -> 1시간 단위 기온
 def get_ultra_srt_ncst():
-    now = datetime.now()
+    now = timezone.now()
     base_url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtNcst'
     key = 'X5SR1tXGMMIIhiGfESNHl934eVnCDtQwTN%2B7JYgkGs2vWFkDdter5IhoTH8zNSKPuohVnrycbdhG%2F%2B5tHqQBVw%3D%3D'
     base_date = now.strftime('%Y%m%d')
@@ -46,7 +47,7 @@ def get_ultra_srt_ncst():
 
 # 초단기 예보 조회
 def get_ultra_srt_fcst():
-    now = datetime.now()
+    now = timezone.now()
     base_url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtFcst'
     key = 'X5SR1tXGMMIIhiGfESNHl934eVnCDtQwTN%2B7JYgkGs2vWFkDdter5IhoTH8zNSKPuohVnrycbdhG%2F%2B5tHqQBVw%3D%3D'
     base_date = now.strftime('%Y%m%d')
@@ -75,7 +76,7 @@ def get_ultra_srt_fcst():
 NUM_OF_ITEMS = 4    # 총 15개 가져올 수 있음
 MAX_CATEGORY = 14
 def get_vilage_fcst():
-    now = datetime.now()
+    now = timezone.now()
     base_url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst'
     key = 'X5SR1tXGMMIIhiGfESNHl934eVnCDtQwTN%2B7JYgkGs2vWFkDdter5IhoTH8zNSKPuohVnrycbdhG%2F%2B5tHqQBVw%3D%3D'
     base_date = now.strftime('%Y%m%d')
