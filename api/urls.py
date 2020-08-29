@@ -4,5 +4,5 @@ from api import views
 urlpatterns = [
     path('weather/', views.return_weather, name='return_weather'),
     path('notice/', views.return_notices, name='return_notices'),
-    path('suggestion/', views.post_suggestion, name='post_suggestion'),
+    path('suggestion', views.post_suggestion, name='post_suggestion'),
 ]
