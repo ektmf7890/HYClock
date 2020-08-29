@@ -61,11 +61,38 @@ def return_notices(request):
 
 @api_view(['POST'])
 def post_suggestion(request):
-    res = slack("zz")
     
     context = {
-        "webhook": "{} - {}".format(res.text, timezone.now())
+        "result": "success"
     }
+
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+
+    email = request.data.get("email")
+    if email is None:
+        context["result"] = "fail"
+        context["error"] = "이메일이 입력되지 않았습니다."
+        return Response(context)
+    
+    content = request.data.get("content")
+    if content is None:
+        context["result"] = "fail"
+        context["error"] = "내용이 입력되지 않았습니다."
+        return Response(context)
+
+    name = request.data.get("name", "익명")
+    student_id = request.data.get("student_id", "None")
+    
+    title = "{name}({student_id}학번)님에게서 cs 사항이 도착했습니다.".format(
+        name=name,
+        student_id=student_id,
+    )
+
+    res = slack(title, content + '\n' + email + " " + ip)
     return Response(context)
 
 
