@@ -51,7 +51,7 @@ def get_ultra_srt_fcst():
         base_date = (now - timedelta(days=1)).strftime("%Y%m%d")
     else:
         base_date = now.strftime("%Y%m%d")
-    base_time = (now - timezone.timedelta(hours=1)).strftime("%H")
+    base_time = now - timezone.timedelta(hours=1)
 
     base_url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtFcst'
     key = 'X5SR1tXGMMIIhiGfESNHl934eVnCDtQwTN%2B7JYgkGs2vWFkDdter5IhoTH8zNSKPuohVnrycbdhG%2F%2B5tHqQBVw%3D%3D'
@@ -60,18 +60,18 @@ def get_ultra_srt_fcst():
     result = requests.get(url).json()['response']['body']['items']['item']
 
     hourly_weather = {
-        f'{(base_time + timezone.timedelta(hours=1)).strftime("%H")}00': {},
-        f'{(base_time + timezone.timedelta(hours=2)).strftime("%H")}00': {},
-        f'{(base_time + timezone.timedelta(hours=3)).strftime("%H")}00': {},
-        f'{(base_time + timezone.timedelta(hours=4)).strftime("%H")}00': {},
-        f'{(base_time + timezone.timedelta(hours=5)).strftime("%H")}00': {},
-        f'{(base_time + timezone.timedelta(hours=6)).strftime("%H")}00': {},
+        f'{(base_time + timedelta(hours=1)).strftime("%H")}00': {},
+        f'{(base_time + timedelta(hours=2)).strftime("%H")}00': {},
+        f'{(base_time + timedelta(hours=3)).strftime("%H")}00': {},
+        f'{(base_time + timedelta(hours=4)).strftime("%H")}00': {},
+        f'{(base_time + timedelta(hours=5)).strftime("%H")}00': {},
+        f'{(base_time + timedelta(hours=6)).strftime("%H")}00': {},
     }
     for data in result:
         target = hourly_weather[data['fcstTime']]
         target[category_map[data['category']]] = data['fcstValue']
 
-    CURRENT_WEATHER_KEY = f'{(base_time + timezone.timedelta(hours=1)).strftime("%H")}00'
+    CURRENT_WEATHER_KEY = f'{(base_time + timedelta(hours=1)).strftime("%H")}00'
     return CURRENT_WEATHER_KEY, hourly_weather
 
 
