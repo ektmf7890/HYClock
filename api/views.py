@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from api.weatherAPI import *
 from api.noticeAPI import *
 from api.slackAPI import slack
@@ -6,7 +5,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import re
 import requests
-from django.utils import timezone
 from bs4 import BeautifulSoup
 
 
