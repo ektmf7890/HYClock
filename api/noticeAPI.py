@@ -18,7 +18,11 @@ def extract_notices(page_num):
     for notice in notices:
         campus = notice.p.span.get('class')
         if ('label_hyu' in campus) or ('label_seoul' in campus):
-            seoul_hyu_notices.append(notice)
+            context = {
+                'notice': notice,
+                'page_num':page_num
+            }
+            seoul_hyu_notices.append(context)
     return seoul_hyu_notices
 
 
