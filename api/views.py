@@ -15,6 +15,8 @@ def return_weather(request):
     hourly_weather[current_weather_key].update(current_weather)
     # three_hourly_weather = get_vilage_fcst()
 
+    # 날씨 아이콘 추가하는 부분
+
     context = {
         'ultra_srt_fcst': hourly_weather,
         'ultra_srt_ncst': current_weather,
