@@ -1,5 +1,5 @@
-# from datetime import datetime, timedelta
 from django.utils import timezone
+from datetime import timedelta
 import requests
 
 category_map = {
@@ -25,17 +25,16 @@ category_map = {
 # 초단기 실황 조회 -> 1시간 단위 기온
 def get_ultra_srt_ncst():
     now = timezone.localtime()
-    if str(now.hour) == "0" or str(now.hour) == "1":
-        now = now - timezone.timedelta(hours=1)
-        base_time = now
+    if str(now.hour) == "0" or str(now.hour) == '1':
+        base_date = (now - timedelta(days=1)).strftime("%Y%m%d")
     else:
-        base_time = now - timezone.timedelta(hours=1)
-    base_date = now.strftime("%Y%m%d")
+        base_date = now.strftime("%Y%m%d")
+    base_time = (now - timezone.timedelta(hours=1)).strftime("%H")
 
     base_url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtNcst'
     key = 'X5SR1tXGMMIIhiGfESNHl934eVnCDtQwTN%2B7JYgkGs2vWFkDdter5IhoTH8zNSKPuohVnrycbdhG%2F%2B5tHqQBVw%3D%3D'
 
-    url = f'{base_url}?serviceKey={key}&dataType=JSON&numOfRows=36&base_date={base_date}&base_time={base_time.strftime("%H")}00&nx=61&ny=127'
+    url = f'{base_url}?serviceKey={key}&dataType=JSON&numOfRows=36&base_date={base_date}&base_time={base_time}00&nx=61&ny=127'
     result = requests.get(url).json()['response']['body']['items']['item']
 
     current_weather = {}
@@ -48,14 +47,11 @@ def get_ultra_srt_ncst():
 # 초단기 예보 조회
 def get_ultra_srt_fcst():
     now = timezone.localtime()
-    if str(now.hour) == "0" or str(now.hour) == "1":
-        now = now - timezone.timedelta(hours=1)
-        base_time = now
+    if str(now.hour) == "0" or str(now.hour) == '1':
+        base_date = (now - timedelta(days=1)).strftime("%Y%m%d")
     else:
-        base_time = (now - timezone.timedelta(hours=1))
-
-    base_date = now.strftime("%Y%m%d")
-    print(base_date, base_time)
+        base_date = now.strftime("%Y%m%d")
+    base_time = (now - timezone.timedelta(hours=1)).strftime("%H")
 
     base_url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtFcst'
     key = 'X5SR1tXGMMIIhiGfESNHl934eVnCDtQwTN%2B7JYgkGs2vWFkDdter5IhoTH8zNSKPuohVnrycbdhG%2F%2B5tHqQBVw%3D%3D'
