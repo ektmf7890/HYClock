@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+import json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'api',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -129,3 +131,19 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'api', 'static'),
 ]
+
+
+try:
+    ENV_SECRET_DIR = os.path.join(BASE_DIR, ".secrets")
+    ENV_SETTINGS_COMMON_FILE = os.path.join(ENV_SECRET_DIR, ".env.json")
+    SECRETS = json.loads(open(ENV_SETTINGS_COMMON_FILE).read())
+except Exception as e:
+    SECRETS = {}
+    print("no environment file in project", e)
+
+
+
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ALLOWED_ORIGINS = [
+#     "127.0.0.1"
+# ]
