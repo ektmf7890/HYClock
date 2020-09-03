@@ -8,21 +8,16 @@ import requests
 from bs4 import BeautifulSoup
 from django.core.cache import cache
 
-
 @api_view(['GET'])
 def return_weather(request):
     context = cache.get("weather_context")
     if context is None:
-        current_weather_key, hourly_weather = get_ultra_srt_fcst()
         current_weather = get_ultra_srt_ncst()
-        hourly_weather[current_weather_key].update(current_weather)
-        # three_hourly_weather = get_vilage_fcst()
-
-        # 날씨 아이콘 추가하는 부분
+        three_hourly_weather = get_vilage_fcst()
 
         context = {
-            'ultra_srt_fcst': hourly_weather,
-            'ultra_srt_ncst': current_weather,
+            'current_weather': current_weather,
+            'three_hourly_weather': three_hourly_weather,
         }
         cache.set("weather_context", context)
 
@@ -31,7 +26,6 @@ def return_weather(request):
 
 @api_view(['GET'])
 def return_notices(request):
-
     context = cache.get("notice_context")
     if context is None:
         notices = get_recent_notice()
@@ -67,8 +61,6 @@ def return_notices(request):
         cache.set("notice_context", context)
 
     return Response(context)
-
-
 
 @api_view(['POST'])
 def post_suggestion(request):
