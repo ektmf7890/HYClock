@@ -1,0 +1,5 @@
+-r common.txt
+
+nginx
+gunicorn
+redis-server
