@@ -81,43 +81,53 @@ def get_vilage_fcst():
     else:
         return 'API_ERROR'
 
-    three_hourly_weather = {
-        f'{(base_time + timezone.timedelta(hours=4)).strftime("%H")}00': {
-            'time': f'{(base_time + timezone.timedelta(hours=4)).strftime("%H")}시',
-            'content': {},
+    three_hourly_weather = [
+        {
+            'time': '',
             'weather_emoji': '',
-        },
-        f'{(base_time + timezone.timedelta(hours=7)).strftime("%H")}00': {
-            'time': f'{(base_time + timezone.timedelta(hours=7)).strftime("%H")}시',
             'content': {},
-            'weather_emoji': '',
         },
-        f'{(base_time + timezone.timedelta(hours=10)).strftime("%H")}00': {
-            'time': f'{(base_time + timezone.timedelta(hours=10)).strftime("%H")}시',
+        {
+            'time': '',
+            'weather_emoji': '',
             'content': {},
-            'weather_emoji': '',
         },
-        f'{(base_time + timezone.timedelta(hours=13)).strftime("%H")}00': {
-            'time': f'{(base_time + timezone.timedelta(hours=13)).strftime("%H")}시',
+        {
+            'time': '',
+            'weather_emoji': '',
             'content': {},
-            'weather_emoji': '',
         },
-        f'{(base_time + timezone.timedelta(hours=16)).strftime("%H")}00': {
-            'time': f'{(base_time + timezone.timedelta(hours=16)).strftime("%H")}시',
+        {
+            'time': '',
+            'weather_emoji': '',
             'content': {},
-            'weather_emoji': '',
         },
-    }
+        {
+            'time': '',
+            'weather_emoji': '',
+            'content': {},
+        },
+    ]
 
     for data in result:
-        target = three_hourly_weather.get(data['fcstTime'])
-        if target is None:
-            break
+        if data['fcstTime'] == f'{(base_time + timezone.timedelta(hours=4)).strftime("%H")}00':
+            target = three_hourly_weather[0]
+        elif data['fcstTime'] == f'{(base_time + timezone.timedelta(hours=7)).strftime("%H")}00':
+            target = three_hourly_weather[1]
+        elif data['fcstTime'] == f'{(base_time + timezone.timedelta(hours=10)).strftime("%H")}00':
+            target = three_hourly_weather[2]
+        elif data['fcstTime'] == f'{(base_time + timezone.timedelta(hours=13)).strftime("%H")}00':
+            target = three_hourly_weather[3]
+        elif data['fcstTime'] == f'{(base_time + timezone.timedelta(hours=16)).strftime("%H")}00':
+            target = three_hourly_weather[4]
         else:
-            target_content = target['content']
+            break
+        target['time'] = f"{data['fcstTime'][:2]}시"
+        target_content = target['content']
         target_content[category_map[data['category']]] = data['fcstValue']
 
-    for value in three_hourly_weather.values():
+
+    for value in three_hourly_weather:
         content = value['content']
         if content.get('강수형태') and content.get('하늘상태'):
             emoji = get_weather_emoji(precipitation=content['강수형태'], sky=content['하늘상태'])

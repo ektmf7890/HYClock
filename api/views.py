@@ -20,7 +20,6 @@ def return_weather(request):
             'three_hourly_weather': three_hourly_weather,
         }
         cache.set("weather_context", context)
-
     return Response(context)
 
 
@@ -59,7 +58,6 @@ def return_notices(request):
             'noticeList': notice_list,
         }
         cache.set("notice_context", context)
-
     return Response(context)
 
 @api_view(['POST'])
