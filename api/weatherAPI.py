@@ -25,7 +25,7 @@ category_map = {
 # 초단기 실황 조회 -> 1시간 단위 기온
 def get_ultra_srt_ncst():
     now = timezone.localtime()
-    if now.hour == 0 or now.hour == 1:
+    if now.hour == 0:
         base_date = (now - timedelta(days=1)).strftime("%Y%m%d")
     else:
         base_date = now.strftime("%Y%m%d")
@@ -139,7 +139,7 @@ def get_vilage_fcst():
 # 초단기 예보 조회
 def get_ultra_srt_fcst():
     now = timezone.localtime()
-    if now.hour == 0 or now.hour == 1:
+    if now.hour == 0:
         base_date = (now - timedelta(days=1)).strftime("%Y%m%d")
     else:
         base_date = now.strftime("%Y%m%d")
