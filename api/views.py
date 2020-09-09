@@ -99,6 +99,7 @@ def post_suggestion(request):
 
 @api_view(['GET'])
 def return_menulist(request):
+    print(request.build_absolute_uri())
     context = {
         "data": [
             "짜장면",
